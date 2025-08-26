@@ -1,0 +1,48 @@
+{
+  "name": "vvecon-setup",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A powerful CLI tool to automate the setup process for VVECON projects",
+  "main": "scripts/setup.js",
+  "bin": {
+    "vvecon-setup": "./scripts/setup.js"
+  },
+  "files": [
+    "scripts/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "setup": "node ./scripts/setup.js"
+  },
+  "keywords": [
+    "vvecon",
+    "laravel",
+    "setup",
+    "cli",
+    "automation",
+    "composer",
+    "php",
+    "wizard"
+  ],
+  "homepage": "https://github.com/banulalakwindu/vvecon-setup",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/banulalakwindu/vvecon-setup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/banulalakwindu/vvecon-setup/issues"
+  },
+  "author": "Banula Lakwindu <banulalakwindu10@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.6.0",
+    "cli-progress": "^3.12.0",
+    "execa": "^9.6.0",
+    "inquirer": "^12.9.3",
+    "ora": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
