@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 import inquirer from 'inquirer';
-import {execa} from 'execa';
+import { execa } from 'execa';
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from 'url';
 import ora from 'ora';
 import cliProgress from 'cli-progress';
+import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -62,7 +63,7 @@ function deleteDirectory(dir) {
 async function runCommand(command, args, stepLabel = '', spinnerText = '') {
     const spinner = ora(spinnerText || `${stepLabel} Running ${command}`).start();
     try {
-        await execa(command, args, {stdio: 'inherit'});
+        await execa(command, args, { stdio: 'inherit' });
         spinner.succeed(chalk.green(`${stepLabel} ✅ ${command} completed`));
         beepSuccess();
         process.stdout.write('\n'); // prevent overwriting
@@ -105,7 +106,7 @@ async function randomMotivation() {
         '🛠️ Building greatness!',
         '🚴 Keep moving forward!',
     ];
-    await typeWriter(chalk.cyanBright(messages[Math.floor(Math.random() * messages.length)]));
+    await typeWriter(chalk.cyanBright('\n\n' + messages[Math.floor(Math.random() * messages.length)]) + '\n\n');
 }
 
 // ----------------------------
@@ -113,10 +114,34 @@ async function randomMotivation() {
 // ----------------------------
 async function displayBanner() {
     try {
-        await execa('npx', ['oh-my-logo', 'VVECON', 'dawn', '--filled', '--color'], {stdio: 'inherit'});
+        await execa('npx', ['oh-my-logo', 'VVECON', 'dawn', '--filled', '--color'], { stdio: 'inherit' });
         process.stdout.write('\n'); // make sure it doesn't overwrite
     } catch {
     }
+}
+
+// ----------------------------
+// Environment Check
+// ----------------------------
+function checkEnvironment() {
+    // Load .env file if it exists
+    const envPath = path.join(process.cwd(), '.env');
+    if (fs.existsSync(envPath)) {
+        dotenv.config({ path: envPath });
+    }
+
+    const env = process.env.APP_ENV || 'local';
+    const isProduction = env === 'production';
+
+    if (isProduction) {
+        console.log(chalk.red.bold('\n🚨 PRODUCTION ENVIRONMENT DETECTED! 🚨'));
+        console.log(chalk.red('This setup script is designed for development environments only.'));
+        console.log(chalk.red('Running this script in production may cause data loss or system issues.'));
+        console.log(chalk.yellow('\nIf you are sure you want to continue, set APP_ENV=local'));
+        process.exit(1);
+    }
+
+    return env;
 }
 
 // ----------------------------
@@ -132,7 +157,7 @@ async function main() {
     const totalSteps = 11;
 
     const progressBar = new cliProgress.SingleBar({
-        format: 'Progress |' + chalk.cyan('{bar}') + '| {percentage}% || Step {value}/{total}',
+        format: '\n\n' + 'Progress |' + chalk.cyan('{bar}') + '| {percentage}% || Step {value}/{total}' + '\n\n',
         barCompleteChar: '\u2588',
         barIncompleteChar: '\u2591',
         hideCursor: true
@@ -173,6 +198,11 @@ async function main() {
             await typeWriter(chalk.green('✓ .env exists and APP_KEY is valid'));
         }
     }
+
+    // Environment check after .env is created/verified
+    const currentEnv = checkEnvironment();
+    await typeWriter(chalk.green(`✓ Environment check passed (${currentEnv})`), 20);
+
     await randomMotivation();
     step++;
     progressBar.update(step - 1);
@@ -205,17 +235,17 @@ async function main() {
 
     // Step 7: Database migration
     await printStepHeader(step, totalSteps, 'Database migration');
-    const {migrationOption} = await inquirer.prompt([
+    const { migrationOption } = await inquirer.prompt([
         {
             type: 'list',
             name: 'migrationOption',
             message: '🔄 Select database migration option:',
             choices: [
-                {name: 'No', value: 'none'},
-                {name: 'Run migrations only', value: 'migrate'},
-                {name: 'Run fresh migrations (wipe database)', value: 'migrate:fresh'},
-                {name: 'Run migrations with seeding', value: 'seed'},
-                {name: 'Run fresh migrations with seeding', value: 'seed:fresh'},
+                { name: 'No', value: 'none' },
+                { name: 'Run migrations only', value: 'migrate' },
+                { name: 'Run fresh migrations (wipe database)', value: 'migrate:fresh' },
+                { name: 'Run migrations with seeding', value: 'seed' },
+                { name: 'Run fresh migrations with seeding', value: 'seed:fresh' },
             ],
             default: 0,
         },
@@ -250,14 +280,14 @@ async function main() {
 
     // Step 9: Build frontend assets
     await printStepHeader(step, totalSteps, 'Frontend asset build');
-    const {buildAssets} = await inquirer.prompt([
+    const { buildAssets } = await inquirer.prompt([
         {
             type: 'list',
             name: 'buildAssets',
             message: '🎨 Do you want to build frontend assets?',
             choices: [
-                {name: 'No, skip it 😴', value: false},
-                {name: 'Yes, let’s do it 🚀', value: true},
+                { name: 'No, skip it 😴', value: false },
+                { name: 'Yes, let’s do it 🚀', value: true },
             ],
             default: 0,
         },
@@ -270,14 +300,14 @@ async function main() {
 
     // Step 10: Production optimizations
     await printStepHeader(step, totalSteps, 'Production optimizations');
-    const {runProd} = await inquirer.prompt([
+    const { runProd } = await inquirer.prompt([
         {
             type: 'list',
             name: 'runProd',
             message: '🚀 Do you want to run production optimizations?',
             choices: [
-                {name: 'No, skip it 😴', value: false},
-                {name: 'Yes, optimize 🚀', value: true},
+                { name: 'No, skip it 😴', value: false },
+                { name: 'Yes, optimize 🚀', value: true },
             ],
             default: 0,
         },
