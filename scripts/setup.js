@@ -176,7 +176,7 @@ async function main() {
 
     // Step 2: Composer install (no scripts)
     await printStepHeader(step, totalSteps, 'Installing Composer dependencies (no-scripts)');
-    await runCommand('composer', ['install', '--no-scripts'], `[2/${totalSteps}]`, 'Installing PHP dependencies...');
+    await runCommand('composer', ['install', '--no-scripts', '--no-interaction', '--no-ansi'], `[2/${totalSteps}]`, 'Installing PHP dependencies...');
     await randomMotivation();
     step++;
     progressBar.update(step - 1);
@@ -209,7 +209,7 @@ async function main() {
 
     // Step 4: Composer install (with scripts)
     await printStepHeader(step, totalSteps, 'Re-running Composer install (with scripts)');
-    await runCommand('composer', ['install'], `[4/${totalSteps}]`, 'Running composer scripts...');
+    await runCommand('composer', ['install','--no-interaction', '--no-ansi'], `[4/${totalSteps}]`, 'Running composer scripts...');
     await randomMotivation();
     step++;
     progressBar.update(step - 1);
